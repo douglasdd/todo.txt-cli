@@ -11,6 +11,14 @@ note: PRIORITY must be anywhere from A to Z.
 === 1
 EOF
 
+test_todo_session 'priority usage empty' <<EOF
+>>> todo.sh pri
+usage: todo.sh pri ITEM# PRIORITY
+note: PRIORITY must be anywhere from A to Z.
+=== 1
+EOF
+
+
 cat > todo.txt <<EOF
 smell the uppercase Roses +flowers @outside
 notice the sunflowers
@@ -100,4 +108,33 @@ TODO: 2 already prioritized (A).
 --
 TODO: 3 of 3 tasks shown
 EOF
+
+cat > todo.txt <<EOF
+first
+second
+EOF
+test_todo_session 'priority last entered' <<EOF
+>>> todo.sh pri B
+2 (B) second
+TODO: 2 prioritized (B).
+=== 0
+
+>>> todo.sh -p list
+2 (B) second
+1 first
+--
+TODO: 2 of 2 tasks shown
+=== 0
+EOF
+
+cat > todo.txt <<EOF
+first
+EOF
+test_todo_session 'priority args backwards' <<EOF
+>>> todo.sh pri B 1
+usage: todo.sh pri ITEM# PRIORITY
+note: PRIORITY must be anywhere from A to Z.
+=== 1
+EOF
+
 test_done

@@ -1308,12 +1308,19 @@ case $action in
 
 "pri" | "p" )
     item=$2
-    newpri=$( printf "%s\n" "$3" | tr 'a-z' 'A-Z' )
+    if [ -n "$3" ] ; then
+        newpri=$( printf "%s\n" "$3" | tr 'a-z' 'A-Z' )
+    else
+        # omit ITEM# -- then assume last (most recently added)
+        newpri=$( printf "%s\n" "$item" | tr 'a-z' 'A-Z' )
+        # extra echo to drop leading spaces from 'wc' output
+	item=$(echo $(wc -l < "$TODO_FILE") )
+    fi
 
     errmsg="usage: $TODO_SH pri ITEM# PRIORITY
 note: PRIORITY must be anywhere from A to Z."
 
-    [ "$#" -ne 3 ] && die "$errmsg"
+    [ "$#" -lt 2 ] && die "$errmsg"
     [[ "$newpri" = @([A-Z]) ]] || die "$errmsg"
     getTodo "$item"
 
